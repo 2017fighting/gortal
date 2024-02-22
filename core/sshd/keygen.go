@@ -1,6 +1,7 @@
 package sshd
 
 import (
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -17,29 +18,35 @@ import (
 func GenKey(keyFilePath string) (string, string, error) {
 	savePrivateFileTo := utils.FilePath(keyFilePath)
 	savePublicFileTo := fmt.Sprintf("%s.pub", savePrivateFileTo)
-	bitSize := 4096
+	//bitSize := 4096
 
-	privateKey, err := generatePrivateKey(bitSize)
+	publicKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
 	}
 
-	publicKeyBytes, err := generatePublicKey(&privateKey.PublicKey)
+	//privateKey, err := generatePrivateKey(bitSize)
+	//if err != nil {
+	//	logger.Logger.Error(err.Error())
+	//	return "", "", err
+	//}
+	//
+	//publicKeyBytes, err := generatePublicKey(&privateKey.PublicKey)
+	//if err != nil {
+	//	logger.Logger.Error(err.Error())
+	//	return "", "", err
+	//}
+	//
+	//privateKeyBytes := encodePrivateKeyToPEM(privateKey)
+
+	err = writeKeyToFile(privateKey, savePrivateFileTo)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
 	}
 
-	privateKeyBytes := encodePrivateKeyToPEM(privateKey)
-
-	err = writeKeyToFile(privateKeyBytes, savePrivateFileTo)
-	if err != nil {
-		logger.Logger.Error(err.Error())
-		return "", "", err
-	}
-
-	err = writeKeyToFile([]byte(publicKeyBytes), savePublicFileTo)
+	err = writeKeyToFile(publicKey, savePublicFileTo)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
