@@ -37,7 +37,7 @@ func GenKey(keyFilePath string) (string, string, error) {
 	//	return "", "", err
 	//}
 	pemKey := &pem.Block{
-		Type:    "PRIVATE KEY",
+		Type:    "OPENSSH PRIVATE KEY",
 		Headers: nil,
 		//Bytes:   b,
 		Bytes: edkey.MarshalED25519PrivateKey(privKey),
