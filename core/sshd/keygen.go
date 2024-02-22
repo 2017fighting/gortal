@@ -20,12 +20,27 @@ func GenKey(keyFilePath string) (string, string, error) {
 	savePublicFileTo := fmt.Sprintf("%s.pub", savePrivateFileTo)
 	//bitSize := 4096
 
-	publicKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
+	pubKey, privKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
 	}
-
+	publicKey, err := ssh.NewPublicKey(pubKey)
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		return "", "", err
+	}
+	b, err := x509.MarshalPKCS8PrivateKey(privKey)
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		return "", "", err
+	}
+	pemKey := &pem.Block{
+		Type:  "OPENSSH PRIVATE KEY",
+		Bytes: b,
+	}
+	privatePkey := pem.EncodeToMemory(pemKey)
+	authorizedKey := ssh.MarshalAuthorizedKey(publicKey)
 	//privateKey, err := generatePrivateKey(bitSize)
 	//if err != nil {
 	//	logger.Logger.Error(err.Error())
@@ -40,13 +55,13 @@ func GenKey(keyFilePath string) (string, string, error) {
 	//
 	//privateKeyBytes := encodePrivateKeyToPEM(privateKey)
 
-	err = writeKeyToFile(privateKey, savePrivateFileTo)
+	err = writeKeyToFile(privatePkey, savePrivateFileTo)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
 	}
 
-	err = writeKeyToFile(publicKey, savePublicFileTo)
+	err = writeKeyToFile(authorizedKey, savePublicFileTo)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return "", "", err
