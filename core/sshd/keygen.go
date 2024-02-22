@@ -11,6 +11,7 @@ import (
 
 	"github.com/TNK-Studio/gortal/utils"
 	"github.com/TNK-Studio/gortal/utils/logger"
+	"github.com/mikesmitty/edkey"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -30,14 +31,16 @@ func GenKey(keyFilePath string) (string, string, error) {
 		logger.Logger.Error(err.Error())
 		return "", "", err
 	}
-	b, err := x509.MarshalPKCS8PrivateKey(privKey)
-	if err != nil {
-		logger.Logger.Error(err.Error())
-		return "", "", err
-	}
+	//b, err := x509.MarshalPKCS8PrivateKey(privKey)
+	//if err != nil {
+	//	logger.Logger.Error(err.Error())
+	//	return "", "", err
+	//}
 	pemKey := &pem.Block{
-		Type:  "OPENSSH PRIVATE KEY",
-		Bytes: b,
+		Type:    "PRIVATE KEY",
+		Headers: nil,
+		//Bytes:   b,
+		Bytes: edkey.MarshalED25519PrivateKey(privKey),
 	}
 	privatePkey := pem.EncodeToMemory(pemKey)
 	authorizedKey := ssh.MarshalAuthorizedKey(publicKey)

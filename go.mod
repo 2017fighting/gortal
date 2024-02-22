@@ -11,6 +11,7 @@ require (
 	github.com/gliderlabs/ssh v0.2.2 // indirect
 	github.com/helloyi/go-sshclient v0.0.0-20191203124208-f1e205501005
 	github.com/manifoldco/promptui v0.6.0 // indirect
+	github.com/mikesmitty/edkey v0.0.0-20170222072505-3356ea4e686a
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
 	golang.org/x/sys v0.0.0-20191210023423-ac6580df4449 // indirect
